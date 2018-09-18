@@ -1,0 +1,1 @@
+This command line tool is used to generate OptionsService class from TDLib options documentation located at https://core.telegram.org/tdlib/options
