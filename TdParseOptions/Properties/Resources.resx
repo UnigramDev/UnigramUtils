@@ -145,7 +145,6 @@ namespace Unigram.Services
         public OptionsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
             : base(protoService, cacheService, settingsService, aggregator)
         {
-            aggregator.Subscribe(this);
         }
 
         public void Handle(UpdateOption update)
@@ -154,6 +153,29 @@ namespace Unigram.Services
             {
 {1}
             }
+        }
+
+        private T GetValue&lt;T&gt;(OptionValue option)
+        {
+            if (option is OptionValueBoolean valueBoolean &amp;&amp; typeof(T) == typeof(bool))
+            {
+                return (T)(object)valueBoolean.Value;
+            }
+            else if (option is OptionValueInteger valueInteger &amp;&amp; typeof(T) == typeof(int))
+            {
+                return (T)(object)valueInteger.Value;
+            }
+            else if (option is OptionValueString valueString &amp;&amp; typeof(T) == typeof(string))
+            {
+                return (T)(object)valueString.Value;
+            }
+            else if (option is OptionValueEmpty)
+            {
+                return default(T);
+            }
+
+            Logs.Log.Write($"OptionsService, mismatching type, {typeof(T)} requested, {option.GetType()} received");
+            return default(T);
         }
 
 {2}

@@ -10,10 +10,25 @@ using System.Threading.Tasks;
 
 namespace TdParseOptions
 {
+    class TdOption
+    {
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public bool IsWriteable { get; set; }
+        public string Description { get; set; }
+    }
+
     class Program
     {
         static async Task Main(string[] args)
         {
+            var options = new List<TdOption>();
+
+            // Setup additional options, not (yet) included in public documentation
+            options.Add(new TdOption { Name = "expect_blocking", Type = "bool", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "enabled_proxy_id", Type = "string", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "int", IsWriteable = true, Description = "TBD" });
+
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");
 
@@ -32,6 +47,16 @@ namespace TdParseOptions
                 var type = GetType(row.SelectSingleNode(row.XPath + "//td[2]").InnerText);
                 var writeable = WebUtility.HtmlDecode(row.SelectSingleNode(row.XPath + "//td[3]").InnerText).Equals("yes", StringComparison.OrdinalIgnoreCase);
                 var description = GetDescription(row.SelectSingleNode(row.XPath + "//td[4]").InnerText);
+
+                options.Add(new TdOption { Name = name, Type = type, IsWriteable = writeable, Description = description });
+            }
+
+            foreach (var option in options)
+            {
+                var name = option.Name;
+                var type = option.Type;
+                var writeable = option.IsWriteable;
+                var description = option.Description;
 
                 var optionValue = GetOptionValue(type);
                 var displayName = GetDisplayName(name);
@@ -62,7 +87,7 @@ namespace TdParseOptions
                 cbuilder.AppendLine();
 
                 hbuilder.AppendLine($"                case \"{name}\":");
-                hbuilder.AppendLine($"                    {privateName} = (({optionValue})update.Value).Value;");
+                hbuilder.AppendLine($"                    {privateName} = GetValue<{type}>(update.Value);");
                 hbuilder.AppendLine($"                    break;");
             }
 
