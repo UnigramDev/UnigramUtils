@@ -26,7 +26,7 @@ namespace TdParseOptions
 
             // Setup additional options, not (yet) included in public documentation
             options.Add(new TdOption { Name = "expect_blocking", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "enabled_proxy_id", Type = "string", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "enabled_proxy_id", Type = "int", IsWriteable = false, Description = "TBD" });
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "int", IsWriteable = true, Description = "TBD" });
 
             var client = new HttpClient();
@@ -79,7 +79,7 @@ namespace TdParseOptions
                     cbuilder.AppendLine($"            set");
                     cbuilder.AppendLine($"            {{");
                     cbuilder.AppendLine($"                {privateName} = value;");
-                    cbuilder.AppendLine($"                ProtoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                    cbuilder.AppendLine($"                _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
                     cbuilder.AppendLine($"            }}");
                 }
 
@@ -92,9 +92,9 @@ namespace TdParseOptions
             }
 
             var final = Properties.Resources.BaseFile
-                .Replace("{0}", ibuilder.ToString())
-                .Replace("{1}", hbuilder.ToString())
-                .Replace("{2}", cbuilder.ToString())
+                .Replace("{0}", ibuilder.ToString().TrimEnd())
+                .Replace("{1}", hbuilder.ToString().TrimEnd())
+                .Replace("{2}", cbuilder.ToString().TrimEnd())
                 .Replace("{3}", DateTime.Now.ToString("MM/dd/yyyy HH:mm:ss"));
 
             File.WriteAllText("OptionsService.cs", final);

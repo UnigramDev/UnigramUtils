@@ -137,14 +137,24 @@ namespace Unigram.Services
 {
     public interface IOptionsService : IHandle&lt;UpdateOption&gt;
     {
+        T GetValue&lt;T&gt;(string key);
+        bool TryGetValue&lt;T&gt;(string key, out T value);
+
+        void Clear();
+
+
+
 {0}
     }
 
-    public class OptionsService : TLViewModelBase, IOptionsService
+    public class OptionsService : IOptionsService
     {
-        public OptionsService(IProtoService protoService, ICacheService cacheService, ISettingsService settingsService, IEventAggregator aggregator)
-            : base(protoService, cacheService, settingsService, aggregator)
+        private readonly IProtoService _protoService;
+        private readonly Dictionary&lt;string, OptionValue&gt; _options = new Dictionary&lt;string, OptionValue&gt;();
+
+        public OptionsService(IProtoService protoService)
         {
+            _protoService = protoService;
         }
 
         public void Handle(UpdateOption update)
@@ -176,6 +186,60 @@ namespace Unigram.Services
 
             Logs.Log.Write($"OptionsService, mismatching type, {typeof(T)} requested, {option.GetType()} received");
             return default(T);
+        }
+
+        private bool TryGetValue&lt;T&gt;(OptionValue option, out T value)
+        {
+            if (option is OptionValueBoolean valueBoolean &amp;&amp; typeof(T) == typeof(bool))
+            {
+                value = (T)(object)valueBoolean.Value;
+                return true;
+            }
+            else if (option is OptionValueInteger valueInteger &amp;&amp; typeof(T) == typeof(int))
+            {
+                value = (T)(object)valueInteger.Value;
+                return true;
+            }
+            else if (option is OptionValueString valueString &amp;&amp; typeof(T) == typeof(string))
+            {
+                value = (T)(object)valueString.Value;
+                return true;
+            }
+            else if (option is OptionValueEmpty)
+            {
+                value = default(T);
+                return false;
+            }
+
+            Logs.Log.Write($"OptionsService, mismatching type, {typeof(T)} requested, {option.GetType()} received");
+            value = default(T);
+            return false;
+        }
+
+        public T GetValue&lt;T&gt;(string key)
+        {
+            if (_options.TryGetValue(key, out OptionValue option))
+            {
+                return GetValue&lt;T&gt;(option);
+            }
+
+            return default(T);
+        }
+
+        public bool TryGetValue&lt;T&gt;(string key, out T value)
+        {
+            if (_options.TryGetValue(key, out OptionValue option))
+            {
+                return TryGetValue&lt;T&gt;(option, out value);
+            }
+
+            value = default(T);
+            return false;
+        }
+
+        public void Clear()
+        {
+            _options.Clear();
         }
 
 {2}
