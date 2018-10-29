@@ -162,6 +162,9 @@ namespace Unigram.Services
             switch (update.Name)
             {
 {1}
+                default:
+                    _options[update.Name] = update.Value;
+                    break;
             }
         }
 
