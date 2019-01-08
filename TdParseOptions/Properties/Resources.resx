@@ -137,6 +137,8 @@ namespace Unigram.Services
 {
     public interface IOptionsService : IHandle&lt;UpdateOption&gt;
     {
+        IReadOnlyDictionary&lt;string, OptionValue&gt; Values { get; }
+    
         T GetValue&lt;T&gt;(string key);
         bool TryGetValue&lt;T&gt;(string key, out T value);
 
@@ -150,7 +152,7 @@ namespace Unigram.Services
     public class OptionsService : IOptionsService
     {
         private readonly IProtoService _protoService;
-        private readonly Dictionary&lt;string, OptionValue&gt; _options = new Dictionary&lt;string, OptionValue&gt;();
+        private readonly Dictionary&lt;string, OptionValue&gt; _values = new Dictionary&lt;string, OptionValue&gt;();
 
         public OptionsService(IProtoService protoService)
         {
@@ -163,7 +165,7 @@ namespace Unigram.Services
             {
 {1}
                 default:
-                    _options[update.Name] = update.Value;
+                    _values[update.Name] = update.Value;
                     break;
             }
         }
@@ -219,9 +221,13 @@ namespace Unigram.Services
             return false;
         }
 
+
+
+        public IReadOnlyDictionary&lt;string, OptionValue&gt; Values =&gt; _values;
+
         public T GetValue&lt;T&gt;(string key)
         {
-            if (_options.TryGetValue(key, out OptionValue option))
+            if (_values.TryGetValue(key, out OptionValue option))
             {
                 return GetValue&lt;T&gt;(option);
             }
@@ -231,7 +237,7 @@ namespace Unigram.Services
 
         public bool TryGetValue&lt;T&gt;(string key, out T value)
         {
-            if (_options.TryGetValue(key, out OptionValue option))
+            if (_values.TryGetValue(key, out OptionValue option))
             {
                 return TryGetValue&lt;T&gt;(option, out value);
             }
@@ -242,7 +248,7 @@ namespace Unigram.Services
 
         public void Clear()
         {
-            _options.Clear();
+            _values.Clear();
         }
 
 {2}
