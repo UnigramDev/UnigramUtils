@@ -30,6 +30,9 @@ namespace TdParseOptions
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "int", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
 
+            options.Add(new TdOption { Name = "notification_group_count_max", Type = "int", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "calls_enabled", Type = "bool", IsWriteable = false, Description = "TBD" });
+
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");
 

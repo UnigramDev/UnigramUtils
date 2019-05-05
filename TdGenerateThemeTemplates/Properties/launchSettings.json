@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TdGenerateThemeTemplates": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Source\\Unigram\\Unigram\\Unigram\\Themes\\ThemeSystem.xaml\""
+    }
+  }
+}
