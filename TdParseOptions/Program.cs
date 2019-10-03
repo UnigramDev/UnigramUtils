@@ -29,7 +29,7 @@ namespace TdParseOptions
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
             
             // Tonlib custom options
-            options.Add(new TdOption { Name = "x_wallet_address", Type = "string", IsWriteable = true, Description = "TBD" });
+            //options.Add(new TdOption { Name = "x_wallet_address", Type = "string", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "x_wallet_public_key", Type = "string", IsWriteable = true, Description = "TBD" });
 
             var client = new HttpClient();
