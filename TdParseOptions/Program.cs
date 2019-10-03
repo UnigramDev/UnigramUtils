@@ -82,7 +82,21 @@ namespace TdParseOptions
                     cbuilder.AppendLine($"            set");
                     cbuilder.AppendLine($"            {{");
                     cbuilder.AppendLine($"                {privateName} = value;");
-                    cbuilder.AppendLine($"                _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                    if (string.Equals(type, "string", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cbuilder.AppendLine($"                if (value == null)");
+                        cbuilder.AppendLine($"                {{");
+                        cbuilder.AppendLine($"                    _protoService.Send(new SetOption(\"{name}\", new OptionValueEmpty()));");
+                        cbuilder.AppendLine($"                }}");
+                        cbuilder.AppendLine($"                else");
+                        cbuilder.AppendLine($"                {{");
+                        cbuilder.AppendLine($"                    _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                        cbuilder.AppendLine($"                }}");
+                    }
+                    else
+                    {
+                        cbuilder.AppendLine($"                _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                    }
                     cbuilder.AppendLine($"            }}");
                 }
 
