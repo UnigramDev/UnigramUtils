@@ -25,10 +25,12 @@ namespace TdParseOptions
             var options = new List<TdOption>();
 
             // Setup additional options, not (yet) included in public documentation
-            options.Add(new TdOption { Name = "expect_blocking", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "enabled_proxy_id", Type = "int", IsWriteable = false, Description = "TBD" });
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "int", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
+            
+            // Tonlib custom options
+            options.Add(new TdOption { Name = "x_wallet_address", Type = "int", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "x_wallet_public_key", Type = "bool", IsWriteable = true, Description = "TBD" });
 
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");
@@ -103,6 +105,12 @@ namespace TdParseOptions
 
         static string GetDisplayName(string name)
         {
+            // We want to ignore x_ used for custom options.
+            if (name.StartsWith("x_"))
+            {
+                name = name.Substring(2);
+            }
+
             var split = name.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
             var result = string.Empty;
 
@@ -117,6 +125,12 @@ namespace TdParseOptions
 
         static string GetPrivateName(string name)
         {
+            // We want to ignore x_ used for custom options.
+            if (name.StartsWith("x_"))
+            {
+                name = name.Substring(2);
+            }
+
             var split = name.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
             var result = string.Empty;
 
