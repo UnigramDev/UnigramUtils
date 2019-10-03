@@ -29,8 +29,8 @@ namespace TdParseOptions
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
             
             // Tonlib custom options
-            options.Add(new TdOption { Name = "x_wallet_address", Type = "int", IsWriteable = true, Description = "TBD" });
-            options.Add(new TdOption { Name = "x_wallet_public_key", Type = "bool", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "x_wallet_address", Type = "string", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "x_wallet_public_key", Type = "string", IsWriteable = true, Description = "TBD" });
 
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");
