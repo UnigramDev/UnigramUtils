@@ -27,7 +27,15 @@ namespace TdParseOptions
             // Setup additional options, not (yet) included in public documentation
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "int", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
-            
+            options.Add(new TdOption { Name = "pinned_archived_chat_count_max", Type = "int", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "ignore_platform_restrictions", Type = "bool", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "ignore_sensitive_content_restrictions", Type = "bool", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "can_ignore_sensitive_content_restrictions", Type = "bool", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "animated_emoji_sticker_set_name", Type = "string", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "default_ton_blockchain_config", Type = "string", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "default_ton_blockchain_name", Type = "string", IsWriteable = false, Description = "TBD" });
+
+
             // Tonlib custom options
             //options.Add(new TdOption { Name = "x_wallet_address", Type = "string", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "x_wallet_public_key", Type = "string", IsWriteable = true, Description = "TBD" });
