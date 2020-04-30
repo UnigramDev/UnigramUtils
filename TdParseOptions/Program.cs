@@ -27,9 +27,10 @@ namespace TdParseOptions
             // Setup additional options, not (yet) included in public documentation
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "int", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
-            options.Add(new TdOption { Name = "animated_dice_sticker_set_name", Type = "string", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "default_ton_blockchain_config", Type = "string", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "default_ton_blockchain_name", Type = "string", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "is_location_visible", Type = "bool", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "calls_enabled", Type = "bool", IsWriteable = false, Description = "TBD" });
+            //options.Add(new TdOption { Name = "default_ton_blockchain_config", Type = "string", IsWriteable = false, Description = "TBD" });
+            //options.Add(new TdOption { Name = "default_ton_blockchain_name", Type = "string", IsWriteable = false, Description = "TBD" });
 
 
             // Tonlib custom options
