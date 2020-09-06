@@ -25,13 +25,17 @@ namespace TdParseOptions
             var options = new List<TdOption>();
 
             // Setup additional options, not (yet) included in public documentation
-            options.Add(new TdOption { Name = "expect_blocking", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "enabled_proxy_id", Type = "int", IsWriteable = false, Description = "TBD" });
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "int", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
-
-            options.Add(new TdOption { Name = "notification_group_count_max", Type = "int", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "is_location_visible", Type = "bool", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "calls_enabled", Type = "bool", IsWriteable = false, Description = "TBD" });
+            //options.Add(new TdOption { Name = "default_ton_blockchain_config", Type = "string", IsWriteable = false, Description = "TBD" });
+            //options.Add(new TdOption { Name = "default_ton_blockchain_name", Type = "string", IsWriteable = false, Description = "TBD" });
+
+
+            // Tonlib custom options
+            //options.Add(new TdOption { Name = "x_wallet_address", Type = "string", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "x_wallet_public_key", Type = "string", IsWriteable = true, Description = "TBD" });
 
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");
@@ -83,7 +87,21 @@ namespace TdParseOptions
                     cbuilder.AppendLine($"            set");
                     cbuilder.AppendLine($"            {{");
                     cbuilder.AppendLine($"                {privateName} = value;");
-                    cbuilder.AppendLine($"                _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                    if (string.Equals(type, "string", StringComparison.OrdinalIgnoreCase))
+                    {
+                        cbuilder.AppendLine($"                if (value == null)");
+                        cbuilder.AppendLine($"                {{");
+                        cbuilder.AppendLine($"                    _protoService.Send(new SetOption(\"{name}\", new OptionValueEmpty()));");
+                        cbuilder.AppendLine($"                }}");
+                        cbuilder.AppendLine($"                else");
+                        cbuilder.AppendLine($"                {{");
+                        cbuilder.AppendLine($"                    _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                        cbuilder.AppendLine($"                }}");
+                    }
+                    else
+                    {
+                        cbuilder.AppendLine($"                _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                    }
                     cbuilder.AppendLine($"            }}");
                 }
 
@@ -106,6 +124,12 @@ namespace TdParseOptions
 
         static string GetDisplayName(string name)
         {
+            // We want to ignore x_ used for custom options.
+            if (name.StartsWith("x_"))
+            {
+                name = name.Substring(2);
+            }
+
             var split = name.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
             var result = string.Empty;
 
@@ -120,6 +144,12 @@ namespace TdParseOptions
 
         static string GetPrivateName(string name)
         {
+            // We want to ignore x_ used for custom options.
+            if (name.StartsWith("x_"))
+            {
+                name = name.Substring(2);
+            }
+
             var split = name.Split(new char[] { '_' }, StringSplitOptions.RemoveEmptyEntries);
             var result = string.Empty;
 
