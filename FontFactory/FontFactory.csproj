@@ -6,7 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.4" />
+    <PackageReference Include="Microsoft.Net.Http" Version="2.2.29" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
+    <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>

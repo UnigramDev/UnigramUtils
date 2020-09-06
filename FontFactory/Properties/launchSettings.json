@@ -2,7 +2,7 @@
   "profiles": {
     "FontFactory": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\Fela\\Documents\\Visual Studio 2017\\Projects\\App1\\App1\\Assets\\NotoColorEmoji.ttx\" \"C:\\Users\\Fela\\Documents\\Visual Studio 2017\\Projects\\App1\\App1\\Assets\\Apple Color Emoji1.ttx\" \"C:\\Users\\Fela\\Documents\\Visual Studio 2017\\Projects\\App1\\App1\\Assets\\segoeui.ttx\""
+      "commandLineArgs": "\"D:\\Users\\Fela\\Documents\\Visual Studio 2017\\Projects\\App1\\App1\\Assets\\NotoColorEmoji.ttx\" \"D:\\Users\\Fela\\Documents\\Visual Studio 2017\\Projects\\App1\\App1\\Assets\\Apple Color Emoji1.ttx\" \"D:\\Users\\Fela\\Documents\\Visual Studio 2017\\Projects\\App1\\App1\\Assets\\segoeui.ttx\" \"D:\\Users\\Fela\\Documents\\Visual Studio 2017\\Projects\\App1\\App1\\Assets\\seguisym.ttx\""
     }
   }
 }
