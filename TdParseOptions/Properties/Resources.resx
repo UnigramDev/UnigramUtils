@@ -125,13 +125,8 @@
 // 	Generated: {3}
 // &lt;/auto-generatedInfo&gt;
 // --------------------------------------------------------------------------------------------------
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Telegram.Td.Api;
-using Unigram.ViewModels;
 
 namespace Unigram.Services
 {
@@ -176,7 +171,7 @@ namespace Unigram.Services
             {
                 return (T)(object)valueBoolean.Value;
             }
-            else if (option is OptionValueInteger valueInteger &amp;&amp; typeof(T) == typeof(int))
+            else if (option is OptionValueInteger valueInteger &amp;&amp; typeof(T) == typeof(long))
             {
                 return (T)(object)valueInteger.Value;
             }
@@ -189,7 +184,6 @@ namespace Unigram.Services
                 return default(T);
             }
 
-            Logs.Log.Write($"OptionsService, mismatching type, {typeof(T)} requested, {option.GetType()} received");
             return default(T);
         }
 
@@ -200,7 +194,7 @@ namespace Unigram.Services
                 value = (T)(object)valueBoolean.Value;
                 return true;
             }
-            else if (option is OptionValueInteger valueInteger &amp;&amp; typeof(T) == typeof(int))
+            else if (option is OptionValueInteger valueInteger &amp;&amp; typeof(T) == typeof(long))
             {
                 value = (T)(object)valueInteger.Value;
                 return true;
@@ -216,7 +210,6 @@ namespace Unigram.Services
                 return false;
             }
 
-            Logs.Log.Write($"OptionsService, mismatching type, {typeof(T)} requested, {option.GetType()} received");
             value = default(T);
             return false;
         }
@@ -253,6 +246,7 @@ namespace Unigram.Services
 
 {2}
     }
-}</value>
+}
+</value>
   </data>
 </root>

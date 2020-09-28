@@ -19,7 +19,7 @@ namespace TdParseOptions.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -68,12 +68,12 @@ namespace TdParseOptions.Properties {
         ///// 	Generated: {3}
         ///// &lt;/auto-generatedInfo&gt;
         ///// --------------------------------------------------------------------------------------------------
-        ///using System;
         ///using System.Collections.Generic;
-        ///using System.Linq;
-        ///using System.Text;
-        ///using System.Threading.Tasks;
-        ///usi [rest of string was truncated]&quot;;.
+        ///using Telegram.Td.Api;
+        ///
+        ///namespace Unigram.Services
+        ///{
+        ///    public interface IOptionsSer [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseFile {
             get {
