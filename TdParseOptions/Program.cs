@@ -25,13 +25,13 @@ namespace TdParseOptions
             var options = new List<TdOption>();
 
             // Setup additional options, not (yet) included in public documentation
-            options.Add(new TdOption { Name = "telegram_service_notifications_chat_id", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "replies_bot_chat_id", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "archive_and_mute_new_chats_from_unknown_users", Type = "bool", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "long", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
-            options.Add(new TdOption { Name = "is_location_visible", Type = "bool", IsWriteable = true, Description = "TBD" });
             options.Add(new TdOption { Name = "calls_enabled", Type = "bool", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "disable_animated_emoji", Type = "bool", IsWriteable = true, Description = "TBD" });
+
+            // Custom options
+            options.Add(new TdOption { Name = "x_system_proxy_id", Type = "long", IsWriteable = true, Description = "TBD" });
 
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");
