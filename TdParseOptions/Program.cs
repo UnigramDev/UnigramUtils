@@ -26,9 +26,15 @@ namespace TdParseOptions
 
             // Setup additional options, not (yet) included in public documentation
             options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "long", IsWriteable = true, Description = "TBD" });
-            options.Add(new TdOption { Name = "disable_pinned_message_notifications", Type = "bool", IsWriteable = true, Description = "TBD" });
-            options.Add(new TdOption { Name = "calls_enabled", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "disable_animated_emoji", Type = "bool", IsWriteable = true, Description = "TBD" });
+            options.Add(new TdOption { Name = "notification_sound_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "notification_sound_size_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "notification_sound_duration_max", Type = "long", IsWriteable = false, Description = "TBD" });
+
+            options.Add(new TdOption { Name = "is_premium", Type = "bool", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "is_premium_available", Type = "bool", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "chat_filter_chosen_chat_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "chat_filter_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add(new TdOption { Name = "bio_length_max", Type = "long", IsWriteable = false, Description = "TBD" });
 
             // Custom options
             options.Add(new TdOption { Name = "x_system_proxy_id", Type = "long", IsWriteable = true, Description = "TBD" });
@@ -74,12 +80,12 @@ namespace TdParseOptions
                 ibuilder.AppendLine();
 
                 cbuilder.AppendLine($"        private {type} {privateName};");
-                cbuilder.AppendLine($"        public {type} {displayName}");
-                cbuilder.AppendLine($"        {{");
-                cbuilder.AppendLine($"            get {{ return {privateName}; }}");
-
                 if (writeable)
                 {
+                    cbuilder.AppendLine($"        public {type} {displayName}");
+                    cbuilder.AppendLine($"        {{");
+                    cbuilder.AppendLine($"            get => {privateName};");
+
                     cbuilder.AppendLine($"            set");
                     cbuilder.AppendLine($"            {{");
                     cbuilder.AppendLine($"                {privateName} = value;");
@@ -99,9 +105,12 @@ namespace TdParseOptions
                         cbuilder.AppendLine($"                _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
                     }
                     cbuilder.AppendLine($"            }}");
+                    cbuilder.AppendLine($"        }}");
                 }
-
-                cbuilder.AppendLine($"        }}");
+                else
+                {
+                    cbuilder.AppendLine($"        public {type} {displayName} => {privateName};");
+                }
                 cbuilder.AppendLine();
 
                 hbuilder.AppendLine($"                case \"{name}\":");

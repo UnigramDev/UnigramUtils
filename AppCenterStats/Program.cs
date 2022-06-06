@@ -21,7 +21,9 @@ namespace AppCenterStats
                 { 18363, "November 2019" },
                 { 19041, "May 2020" },
                 { 19042, "October 2020" },
-                { 22000, "Seven Eleven" },
+                { 19043, "May 2021" },
+                { 19044, "November 2021" },
+                { 22000, "Windows 11" },
             };
 
             var windows = new[]
@@ -37,6 +39,8 @@ namespace AppCenterStats
                 18363,
                 19041,
                 19042,
+                19043,
+                19044,
                 22000
             };
 
