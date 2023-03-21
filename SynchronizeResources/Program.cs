@@ -1,14 +1,11 @@
-﻿using System.Diagnostics;
-using System.Net;
-using System.Security;
-using System.Text.RegularExpressions;
+﻿using System.Security;
 using System.Xml.Linq;
 
 namespace SynchronizeResources
 {
     class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var remote = XDocument.Load("https://translations.telegram.org/en/unigram/export");
             if (remote.Root == null)
