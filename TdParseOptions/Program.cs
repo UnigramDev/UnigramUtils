@@ -22,22 +22,24 @@ namespace TdParseOptions
     {
         static async Task Main(string[] args)
         {
-            var options = new List<TdOption>();
+            var options = new Dictionary<string, TdOption>();
 
             // Setup additional options, not (yet) included in public documentation
-            options.Add(new TdOption { Name = "storage_max_time_from_last_access", Type = "long", IsWriteable = true, Description = "TBD" });
-            options.Add(new TdOption { Name = "notification_sound_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "notification_sound_size_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "notification_sound_duration_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("storage_max_time_from_last_access", new TdOption { Name = "storage_max_time_from_last_access", Type = "long", IsWriteable = true, Description = "TBD" });
+            options.Add("notification_sound_count_max", new TdOption { Name = "notification_sound_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("notification_sound_size_max", new TdOption { Name = "notification_sound_size_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("notification_sound_duration_max", new TdOption { Name = "notification_sound_duration_max", Type = "long", IsWriteable = false, Description = "TBD" });
 
-            options.Add(new TdOption { Name = "is_premium", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "is_premium_available", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "chat_filter_chosen_chat_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "chat_filter_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add(new TdOption { Name = "bio_length_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("is_premium", new TdOption { Name = "is_premium", Type = "bool", IsWriteable = false, Description = "TBD" });
+            options.Add("is_premium_available", new TdOption { Name = "is_premium_available", Type = "bool", IsWriteable = false, Description = "TBD" });
+            options.Add("chat_filter_chosen_chat_count_max", new TdOption { Name = "chat_filter_chosen_chat_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("chat_filter_count_max", new TdOption { Name = "chat_filter_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("bio_length_max", new TdOption { Name = "bio_length_max", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("anti_spam_bot_user_id", new TdOption { Name = "anti_spam_bot_user_id", Type = "long", IsWriteable = false, Description = "TBD" });
+            options.Add("forum_member_count_min", new TdOption { Name = "forum_member_count_min", Type = "bool", IsWriteable = false, Description = "TBD" });
 
             // Custom options
-            options.Add(new TdOption { Name = "x_system_proxy_id", Type = "long", IsWriteable = true, Description = "TBD" });
+            options.Add("x_system_proxy_id", new TdOption { Name = "x_system_proxy_id", Type = "long", IsWriteable = true, Description = "TBD" });
 
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");
@@ -58,10 +60,15 @@ namespace TdParseOptions
                 var writeable = WebUtility.HtmlDecode(row.SelectSingleNode(row.XPath + "//td[3]").InnerText).Equals("yes", StringComparison.OrdinalIgnoreCase);
                 var description = GetDescription(row.SelectSingleNode(row.XPath + "//td[4]").InnerText);
 
-                options.Add(new TdOption { Name = name, Type = type, IsWriteable = writeable, Description = description });
+                if (options.ContainsKey(name))
+                {
+                    System.Diagnostics.Debugger.Break();
+                }
+
+                options[name] = new TdOption { Name = name, Type = type, IsWriteable = writeable, Description = description };
             }
 
-            foreach (var option in options)
+            foreach (var option in options.Values)
             {
                 var name = option.Name;
                 var type = option.Type;
@@ -93,16 +100,16 @@ namespace TdParseOptions
                     {
                         cbuilder.AppendLine($"                if (value == null)");
                         cbuilder.AppendLine($"                {{");
-                        cbuilder.AppendLine($"                    _protoService.Send(new SetOption(\"{name}\", new OptionValueEmpty()));");
+                        cbuilder.AppendLine($"                    _clientService.Send(new SetOption(\"{name}\", new OptionValueEmpty()));");
                         cbuilder.AppendLine($"                }}");
                         cbuilder.AppendLine($"                else");
                         cbuilder.AppendLine($"                {{");
-                        cbuilder.AppendLine($"                    _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                        cbuilder.AppendLine($"                    _clientService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
                         cbuilder.AppendLine($"                }}");
                     }
                     else
                     {
-                        cbuilder.AppendLine($"                _protoService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
+                        cbuilder.AppendLine($"                _clientService.Send(new SetOption(\"{name}\", new {optionValue}(value)));");
                     }
                     cbuilder.AppendLine($"            }}");
                     cbuilder.AppendLine($"        }}");
@@ -114,7 +121,7 @@ namespace TdParseOptions
                 cbuilder.AppendLine();
 
                 hbuilder.AppendLine($"                case \"{name}\":");
-                hbuilder.AppendLine($"                    {privateName} = GetValue<{type}>(update.Value);");
+                hbuilder.AppendLine($"                    {privateName} = GetValue<{type}>(value);");
                 hbuilder.AppendLine($"                    break;");
             }
 

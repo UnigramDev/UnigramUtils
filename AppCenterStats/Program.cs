@@ -16,7 +16,7 @@ namespace AppCenterStats
             {
                 //{ 16299, "Fall Creators" },
                 //{ 17134, "April 2018" },
-                { 17763, "October 2018" },
+                //{ 17763, "October 2018" },
                 { 18362, "May 2019" },
                 { 18363, "November 2019" },
                 { 19041, "May 2020" },
@@ -24,6 +24,7 @@ namespace AppCenterStats
                 { 19043, "May 2021" },
                 { 19044, "November 2021" },
                 { 22000, "Windows 11" },
+                { 22621, "Windows 22H2" },
             };
 
             var windows = new[]
@@ -34,20 +35,21 @@ namespace AppCenterStats
                 //15063,
                 //16299,
                 //17134,
-                17763,
+                //17763,
                 18362,
                 18363,
                 19041,
                 19042,
                 19043,
                 19044,
-                22000
+                22000,
+                22621
             };
 
             var latest = windows.Max();
 
             var end = DateTime.Today.AddDays(-1).ToString("yyyy-MM-dd");
-            var start = DateTime.Today.AddDays(-30).ToString("yyyy-MM-dd");
+            var start = DateTime.Today.AddDays(-28).ToString("yyyy-MM-dd");
 
             var client = new HttpClient();
             var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.appcenter.ms/v0.1/apps/unigram-team/unigram-1/analytics/oses?start={start}&end={end}&%24top=0");

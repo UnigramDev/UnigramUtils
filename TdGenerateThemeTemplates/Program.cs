@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -14,11 +15,15 @@ namespace TdGenerateThemeTemplates
     {
         static void Main(string[] args)
         {
-            var document = XDocument.Load(args[0]);
+            var fileName = args[0];
+            var input = fileName.Replace(".xaml", ".taml");
+
+            var document = XDocument.Load(input);
             ToMapping(document);
-            ToDefault(document);
+            ToDefault(document, fileName);
             ToDictionary(document);
-            ToString(document);
+
+            //document.Save(fileName);
         }
 
         static void UpdateFromWinUI(XDocument document)
@@ -152,13 +157,42 @@ namespace TdGenerateThemeTemplates
             var smth = builder.ToString();
         }
 
-        static void ToDefault(XDocument document)
+        // Used to generate theme lookups
+        static void ToDefault(XDocument document, string fileName)
         {
             var xmlns = XNamespace.Get("http://schemas.microsoft.com/winfx/2006/xaml/presentation");
             var x = XNamespace.Get("http://schemas.microsoft.com/winfx/2006/xaml");
+            var media = XNamespace.Get("using:Microsoft.UI.Xaml.Media");
 
             var themes = document.Descendants(xmlns + "ResourceDictionary.ThemeDictionaries").FirstOrDefault();
             var builder = new StringBuilder();
+
+            var input = fileName.Replace(".xaml", ".taml");
+            var text = File.ReadAllText(input);
+
+            var opacities = new Dictionary<string, Dictionary<string, string>>();
+            opacities["Light"] = new();
+            opacities["Dark"] = new();
+            opacities["Light"]["AcrylicBackgroundFillColorDefaultBrush"] = "0.85";
+            opacities["Light"]["AcrylicInAppFillColorDefaultBrush"] = "0.85";
+            opacities["Light"]["AcrylicBackgroundFillColorDefaultInverseBrush"] = "0.96";
+            opacities["Light"]["AcrylicInAppFillColorDefaultInverseBrush"] = "0.96";
+            opacities["Light"]["AcrylicBackgroundFillColorBaseBrush"] = "0.9";
+            opacities["Light"]["AcrylicInAppFillColorBaseBrush"] = "0.9";
+            opacities["Light"]["AccentAcrylicBackgroundFillColorDefaultBrush"] = "0.9";
+            opacities["Light"]["AccentAcrylicInAppFillColorDefaultBrush"] = "0.9";
+            opacities["Light"]["AccentAcrylicBackgroundFillColorBaseBrush"] = "0.9";
+            opacities["Light"]["AccentAcrylicInAppFillColorBaseBrush"] = "0.9";
+            opacities["Dark"]["AcrylicBackgroundFillColorDefaultBrush"] = "0.96";
+            opacities["Dark"]["AcrylicInAppFillColorDefaultBrush"] = "0.96";
+            opacities["Dark"]["AcrylicBackgroundFillColorDefaultInverseBrush"] = "0.85";
+            opacities["Dark"]["AcrylicInAppFillColorDefaultInverseBrush"] = "0.85";
+            opacities["Dark"]["AcrylicBackgroundFillColorBaseBrush"] = "0.96";
+            opacities["Dark"]["AcrylicInAppFillColorBaseBrush"] = "0.96";
+            opacities["Dark"]["AccentAcrylicBackgroundFillColorDefaultBrush"] = "0.8";
+            opacities["Dark"]["AccentAcrylicInAppFillColorDefaultBrush"] = "0.8";
+            opacities["Dark"]["AccentAcrylicBackgroundFillColorBaseBrush"] = "0.8";
+            opacities["Dark"]["AccentAcrylicInAppFillColorBaseBrush"] = "0.8";
 
             foreach (var resources in themes.Descendants(xmlns + "ResourceDictionary").Reverse())
             {
@@ -169,6 +203,9 @@ namespace TdGenerateThemeTemplates
                 var colors = new Dictionary<string, string>();
 
                 var accents = new Dictionary<string, string>();
+
+                var brushToColor = new Dictionary<string, string>();
+                var staticReplacements = new Dictionary<string, string>();
 
                 var themeRegex = new Regex("{ThemeResource (.*?)}");
                 var staticRegex = new Regex("{StaticResource (.*?)}");
@@ -192,6 +229,35 @@ namespace TdGenerateThemeTemplates
                 colors["SystemAccentColorDark2"] = "AccentShade.Dark2";
                 colors["SystemAccentColorDark3"] = "AccentShade.Dark3";
 
+                bool GetColor(string value, out string color, out string key)
+                {
+                    var themeMatch = themeRegex.Match(value);
+                    var staticMatch = staticRegex.Match(value);
+
+                    if (staticMatch.Success && colors.TryGetValue(staticMatch.Groups[1].Value, out string staticValue))
+                    {
+                        key = staticMatch.Groups[1].Value;
+                        color = staticValue;
+                        return true;
+                    }
+                    if (themeMatch.Success && colors.TryGetValue(themeMatch.Groups[1].Value, out string themeValue))
+                    {
+                        key = themeMatch.Groups[1].Value;
+                        color = themeValue;
+                        return true;
+                    }
+                    else if (value.StartsWith("#"))
+                    {
+                        key = value;
+                        color = value;
+                        return true;
+                    }
+
+                    key = null;
+                    color = null;
+                    return false;
+                }
+
                 foreach (var item in resources.Descendants())
                 {
                     if (item.Name == (xmlns + "SolidColorBrush"))
@@ -202,27 +268,87 @@ namespace TdGenerateThemeTemplates
                         var themeMatch = themeRegex.Match(color);
                         var staticMatch = staticRegex.Match(color);
 
-                        if (staticMatch.Success && colors.TryGetValue(staticMatch.Groups[1].Value, out string staticValue))
+                        if (GetColor(color, out string value, out string reference))
                         {
-                            mapping[key] = staticValue;
+                            mapping[key] = value;
+                            brushToColor[key] = string.Format("<SolidColorBrush x:Key=\"{{0}}\" Color=\"{0}\" />", reference.StartsWith('#') ? reference : $"{{{{StaticResource {reference}}}}}");
                         }
-                        if (themeMatch.Success && colors.TryGetValue(themeMatch.Groups[1].Value, out string themeValue))
+                    }
+                    else if (item.Name == (media + "AcrylicBrush"))
+                    {
+                        var key = item.Attribute(x + "Key").Value;
+                        // TintColor="#2C2C2C" TintOpacity="0.15" FallbackColor="#2C2C2C" BackgroundSource="HostBackdrop" />
+                        var tintColor = item.Attribute("TintColor").Value;
+                        var tintOpacity = item.Attribute("TintOpacity").Value;
+                        var fallbackColor = item.Attribute("FallbackColor").Value;
+
+                        var themeMatch = themeRegex.Match(tintColor);
+                        var staticMatch = staticRegex.Match(tintColor);
+
+                        if (GetColor(tintColor, out string tintValue, out string tintResource)
+                            && GetColor(fallbackColor, out string fallbackValue, out string fallbackResource))
                         {
-                            mapping[key] = themeMatch.Groups[1].Value switch
+                            // Mixed scenario isn't supported but let's pretend it is
+
+                            string generic;
+                            if (tintValue.StartsWith('#'))
                             {
-                                "SystemAccentColor" => "AccentShade.Default",
-                                "SystemAccentColorLight1" => "AccentShade.Light1",
-                                "SystemAccentColorLight2" => "AccentShade.Light2",
-                                "SystemAccentColorLight3" => "AccentShade.Light3",
-                                "SystemAccentColorDark1" => "AccentShade.Dark1",
-                                "SystemAccentColorDark2" => "AccentShade.Dark2",
-                                "SystemAccentColorDark3" => "AccentShade.Dark3",
-                            };
+                                tintValue = GetHex(tintValue);
+                                generic = ".Color";
+                            }
+                            else
+                            {
+                                generic = ".Shade";
+                            }
+
+                            if (fallbackValue.StartsWith('#'))
+                            {
+                                fallbackValue = GetHex(fallbackValue);
+                            }
+
+                            if (opacities[resources.Attribute(x + "Key").Value].TryGetValue(key, out string opacity))
+                            {
+                                mapping[key] = string.Format("Acrylic{4}({0}, {1}, {2}, {3})", tintValue, fallbackValue, tintOpacity, opacity, generic);
+                            }
+                            else
+                            {
+                                mapping[key] = string.Format("Acrylic{3}({0}, {1}, {2})", tintValue, fallbackValue, tintOpacity, generic);
+                            }
+
+                            brushToColor[key] = string.Format("<media:AcrylicBrush x:Key=\"{{0}}\" TintColor=\"{0}\" TintOpacity=\"{1}\" FallbackColor=\"{2}\" />",
+                                tintResource.StartsWith('#') ? tintResource : $"{{{{StaticResource {tintResource}}}}}",
+                                tintOpacity,
+                                fallbackResource.StartsWith('#') ? fallbackResource : $"{{{{StaticResource {fallbackResource}}}}}");
                         }
-                        else if (color.StartsWith("#"))
+                    }
+                }
+
+                foreach (var item in resources.Descendants())
+                {
+                    if (item.Name == (xmlns + "StaticResource"))
+                    {
+                        var key = item.Attribute(x + "Key").Value;
+                        var resource = item.Attribute("ResourceKey").Value;
+
+                        if (mapping.TryGetValue(resource, out string value))
                         {
-                            mapping[key] = color;
+                            mapping[key] = value;
+
+                            if (brushToColor.TryGetValue(resource, out string color))
+                            {
+                                staticReplacements[key] = color;
+                            }
+                            else
+                            {
+                                staticReplacements[key] = value;
+                            }
                         }
+                        //else if (colors.TryGetValue(resource, out string color))
+                        //{
+                        //    // Odd, but a thing
+                        //    mapping[key] = color;
+                        //    staticReplacements[key] = string.Format("<SolidColorBrush x:Key=\"{{0}}\" Color=\"{{{{StaticResource {0}}}}}\" />", resource);
+                        //}
                     }
                 }
 
@@ -232,9 +358,7 @@ namespace TdGenerateThemeTemplates
                     {
                         var color = item.Value.TrimStart('#');
                         var a = "FF";
-                        var r = "00";
-                        var g = "00";
-                        var b = "00";
+                        string r, g, b;
 
                         if (color.Length > 6)
                         {
@@ -259,9 +383,67 @@ namespace TdGenerateThemeTemplates
                 }
 
                 builder.AppendLine("\t\t};\r\n");
+
+                foreach (var replacement in staticReplacements)
+                {
+                    continue;
+
+                    var regex = new Regex($"<StaticResource x:Key=\"{replacement.Key}\" ResourceKey=\"(.*?)\" />");
+
+                    if (replacement.Value.StartsWith('#'))
+                    {
+                        text = regex.Replace(text, $"<SolidColorBrush x:Key=\"{replacement.Key}\" Color=\"{replacement.Value}\" />", 1);
+                    }
+                    else
+                    {
+                        text = regex.Replace(text, string.Format(replacement.Value, replacement.Key), 1);
+                    }
+                }
+
+                foreach (var replacement in mapping.Keys.Union(staticReplacements.Keys))
+                {
+                    //continue;
+
+                    var index = text.IndexOf($"x:Key=\"{replacement}\"");
+
+                    while (index > -1)
+                    {
+                        var prev = text.LastIndexOf("\r\n", index);
+                        var next = text.IndexOf("\r\n", index);
+
+                        text = text.Remove(prev, next - prev);
+                        index = text.IndexOf($"x:Key\"{replacement}\"");
+                    }
+                }
             }
 
+            File.WriteAllText(fileName, text);
+
             var smth = builder.ToString();
+        }
+
+        static string GetHex(string value)
+        {
+            var color = value.TrimStart('#');
+            var a = "FF";
+            string r, g, b;
+
+            if (color.Length > 6)
+            {
+                a = color.Substring(0, 2);
+                r = color.Substring(2, 2);
+                g = color.Substring(4, 2);
+                b = color.Substring(6, 2);
+            }
+            else
+            {
+                r = color.Substring(0, 2);
+                g = color.Substring(2, 2);
+                b = color.Substring(4, 2);
+            }
+
+            return string.Format("Color.FromArgb(0x{0}, 0x{1}, 0x{2}, 0x{3})", a, r, g, b);
+
         }
 
         static void ToDictionary(XDocument document)
@@ -339,51 +521,6 @@ namespace TdGenerateThemeTemplates
 
                 builder.AppendLine("\t\t};\r\n");
             }
-        }
-
-        static void ToString(XDocument document)
-        {
-            var xmlns = XNamespace.Get("http://schemas.microsoft.com/winfx/2006/xaml/presentation");
-            var x = XNamespace.Get("http://schemas.microsoft.com/winfx/2006/xaml");
-
-            var dark = document.Descendants(xmlns + "ResourceDictionary").FirstOrDefault(y => y.Attribute(x + "Key") != null && string.Equals(y.Attribute(x + "Key").Value, "Dark"));
-            var resources = dark.Descendants(xmlns + "StaticResource");
-
-            var builder = new StringBuilder();
-            var borders = new StringBuilder();
-            var control = new StringBuilder();
-            borders.Append("<local:ResourcesMapper");
-
-            foreach (var item in resources)
-            {
-                var key = item.Attribute(x + "Key").Value;
-                var color = item.Attribute("ResourceKey").Value;
-
-                if (string.Equals(color, "SystemControlTransparentBrush"))
-                {
-                    continue;
-                }
-
-                builder.AppendLine(string.Format("\t<DataTemplate x:Key=\"{0}Template\">", key));
-                builder.AppendLine(string.Format("\t\t<Ellipse Width=\"24\" Height=\"24\" Fill=\"{{ThemeResource {0}}}\" Stroke=\"White\" StrokeThickness=\"1\"/>", key));
-                builder.AppendLine(string.Format("\t</DataTemplate>\r\n"));
-
-                borders.Append(string.Format("\r\n            {0}=\"{{ThemeResource {0}}}\" ", key));
-
-                control.AppendLine(string.Format(@"        public object {0}
-        {{
-            get {{ return (object)GetValue({0}Property); }}
-            set {{ SetValue({0}Property, value); }}
-        }}
-
-        public static readonly DependencyProperty {0}Property =
-            DependencyProperty.Register(""{0}"", typeof(object), typeof(ResourcesMapper), new PropertyMetadata(null));", key));
-            }
-
-            borders.Append(" />");
-
-            var text = borders.ToString();
-            var text2 = control.ToString();
         }
     }
 }

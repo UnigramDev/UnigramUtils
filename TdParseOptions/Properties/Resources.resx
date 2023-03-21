@@ -130,7 +130,7 @@ using Telegram.Td.Api;
 
 namespace Unigram.Services
 {
-    public interface IOptionsService : IHandle&lt;UpdateOption&gt;
+    public interface IOptionsService
     {
         IReadOnlyDictionary&lt;string, OptionValue&gt; Values { get; }
     
@@ -139,6 +139,8 @@ namespace Unigram.Services
 
         void Clear();
 
+        void Update(string name, OptionValue value);
+
 
 
 {0}
@@ -146,21 +148,21 @@ namespace Unigram.Services
 
     public class OptionsService : IOptionsService
     {
-        private readonly IProtoService _protoService;
+        private readonly IClientService _clientService;
         private readonly Dictionary&lt;string, OptionValue&gt; _values = new Dictionary&lt;string, OptionValue&gt;();
 
-        public OptionsService(IProtoService protoService)
+        public OptionsService(IClientService clientService)
         {
-            _protoService = protoService;
+            _clientService = clientService;
         }
 
-        public void Handle(UpdateOption update)
+        public void Update(string name, OptionValue value)
         {
-            switch (update.Name)
+            switch (name)
             {
 {1}
                 default:
-                    _values[update.Name] = update.Value;
+                    _values[name] = value;
                     break;
             }
         }

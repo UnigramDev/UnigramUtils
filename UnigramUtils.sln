@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TdParseOptions", "TdParseOptions\TdParseOptions.csproj", "{AD79B048-DCD5-40C6-95E9-06CF231B9936}"
 EndProject
@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TdGenerateThemeTemplates", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FontFactory", "FontFactory\FontFactory.csproj", "{F1588B63-1DEC-4E6D-B6D9-4BA1E128F97A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppCenterStats", "AppCenterStats\AppCenterStats.csproj", "{A2701A9E-7265-4263-97BD-0A4561DEBAB2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AppCenterStats", "AppCenterStats\AppCenterStats.csproj", "{A2701A9E-7265-4263-97BD-0A4561DEBAB2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SynchronizeResources", "SynchronizeResources\SynchronizeResources.csproj", "{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +107,26 @@ Global
 		{A2701A9E-7265-4263-97BD-0A4561DEBAB2}.Release|x64.Build.0 = Release|Any CPU
 		{A2701A9E-7265-4263-97BD-0A4561DEBAB2}.Release|x86.ActiveCfg = Release|Any CPU
 		{A2701A9E-7265-4263-97BD-0A4561DEBAB2}.Release|x86.Build.0 = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|ARM.Build.0 = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|x64.Build.0 = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Debug|x86.Build.0 = Debug|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|ARM.ActiveCfg = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|ARM.Build.0 = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|ARM64.Build.0 = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|x64.ActiveCfg = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|x64.Build.0 = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|x86.ActiveCfg = Release|Any CPU
+		{3C8D65CD-F8A6-423B-A7ED-2C3E267E2634}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
