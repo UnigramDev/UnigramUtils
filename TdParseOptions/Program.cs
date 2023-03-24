@@ -22,24 +22,27 @@ namespace TdParseOptions
     {
         static async Task Main(string[] args)
         {
-            var options = new Dictionary<string, TdOption>();
+            var options = new Dictionary<string, TdOption>
+            {
+                // Setup additional options, not (yet) included in public documentation
+                { "storage_max_time_from_last_access", new TdOption { Name = "storage_max_time_from_last_access", Type = "long", IsWriteable = true, Description = "TBD" } },
+                { "notification_sound_count_max", new TdOption { Name = "notification_sound_count_max", Type = "long", IsWriteable = false, Description = "TBD" } },
+                { "notification_sound_size_max", new TdOption { Name = "notification_sound_size_max", Type = "long", IsWriteable = false, Description = "TBD" } },
+                { "notification_sound_duration_max", new TdOption { Name = "notification_sound_duration_max", Type = "long", IsWriteable = false, Description = "TBD" } },
 
-            // Setup additional options, not (yet) included in public documentation
-            options.Add("storage_max_time_from_last_access", new TdOption { Name = "storage_max_time_from_last_access", Type = "long", IsWriteable = true, Description = "TBD" });
-            options.Add("notification_sound_count_max", new TdOption { Name = "notification_sound_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add("notification_sound_size_max", new TdOption { Name = "notification_sound_size_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add("notification_sound_duration_max", new TdOption { Name = "notification_sound_duration_max", Type = "long", IsWriteable = false, Description = "TBD" });
+                { "gift_premium_from_attachment_menu", new TdOption { Name = "gift_premium_from_attachment_menu", Type = "bool", IsWriteable = false, Description = "TBD" } },
+                { "gift_premium_from_input_field", new TdOption { Name = "gift_premium_from_input_field", Type = "bool", IsWriteable = false, Description = "TBD" } },
+                { "is_premium", new TdOption { Name = "is_premium", Type = "bool", IsWriteable = false, Description = "TBD" } },
+                { "is_premium_available", new TdOption { Name = "is_premium_available", Type = "bool", IsWriteable = false, Description = "TBD" } },
+                { "chat_filter_chosen_chat_count_max", new TdOption { Name = "chat_filter_chosen_chat_count_max", Type = "long", IsWriteable = false, Description = "TBD" } },
+                { "chat_filter_count_max", new TdOption { Name = "chat_filter_count_max", Type = "long", IsWriteable = false, Description = "TBD" } },
+                { "bio_length_max", new TdOption { Name = "bio_length_max", Type = "long", IsWriteable = false, Description = "TBD" } },
+                { "anti_spam_bot_user_id", new TdOption { Name = "anti_spam_bot_user_id", Type = "long", IsWriteable = false, Description = "TBD" } },
+                { "forum_member_count_min", new TdOption { Name = "forum_member_count_min", Type = "bool", IsWriteable = false, Description = "TBD" } },
 
-            options.Add("is_premium", new TdOption { Name = "is_premium", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add("is_premium_available", new TdOption { Name = "is_premium_available", Type = "bool", IsWriteable = false, Description = "TBD" });
-            options.Add("chat_filter_chosen_chat_count_max", new TdOption { Name = "chat_filter_chosen_chat_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add("chat_filter_count_max", new TdOption { Name = "chat_filter_count_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add("bio_length_max", new TdOption { Name = "bio_length_max", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add("anti_spam_bot_user_id", new TdOption { Name = "anti_spam_bot_user_id", Type = "long", IsWriteable = false, Description = "TBD" });
-            options.Add("forum_member_count_min", new TdOption { Name = "forum_member_count_min", Type = "bool", IsWriteable = false, Description = "TBD" });
-
-            // Custom options
-            options.Add("x_system_proxy_id", new TdOption { Name = "x_system_proxy_id", Type = "long", IsWriteable = true, Description = "TBD" });
+                // Custom options
+                { "x_system_proxy_id", new TdOption { Name = "x_system_proxy_id", Type = "long", IsWriteable = true, Description = "TBD" } }
+            };
 
             var client = new HttpClient();
             var content = await client.GetStringAsync("https://core.telegram.org/tdlib/options");

@@ -71,9 +71,9 @@ namespace TdParseOptions.Properties {
         ///using System.Collections.Generic;
         ///using Telegram.Td.Api;
         ///
-        ///namespace Unigram.Services
+        ///namespace Telegram.Services
         ///{
-        ///    public interface IOptionsSer [rest of string was truncated]&quot;;.
+        ///    public interface IOptionsSe [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string BaseFile {
             get {
